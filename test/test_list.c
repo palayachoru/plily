@@ -5,7 +5,7 @@
 #include <string.h>
 
 #include "list.h"   // adjust path if needed
-#include "common.h" // for etype_t, element_t
+#include "util.h"   // for etype_t, element_t
 
 static PLList *lst = NULL;
 

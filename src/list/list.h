@@ -22,7 +22,7 @@
 #include <stdbool.h>
 #include <stddef.h>
 
-#include "common.h"
+#include "util.h"
 
 #define INITIAL_CAPACITY  5    // Initial capacity of the List
 

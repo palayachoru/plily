@@ -5,7 +5,7 @@
 #include <math.h>
 
 #include "list.h"
-#include "common.h"
+#include "util.h"
 
 // ================================================
 // Forward declarations (what this module provides)
@@ -33,11 +33,7 @@ static size_t length(PLList *self);
 static bool is_empty(PLList *self);
 
 // UTILITY FUNCTION
-static element_t* new_element(etype_t etype, void *value);
-
 static bool resize(PLList *self);
-
-static void free_element(element_t *element);
 
 
 
@@ -77,7 +73,7 @@ void pllist_free(PLList **self) {
   if (!self || !(*self)) return;
 
   for (size_t i = 0; i < (*self)->size; i++) {
-    free_element( (*self)->arr[i] );
+    pl_free_element( (*self)->arr[i] );
   }
 
   free( (*self)->arr );     // free the array of element_t pointers
@@ -104,7 +100,7 @@ static bool append(PLList *self, etype_t etype, void *value) {
   if ((self->size == self->capacity) && !resize(self)) return false;
 
   // allocate an element_t struct
-  element_t *element = new_element(etype, value);
+  element_t *element = pl_new_element(etype, value);
   if (!element) return false;
 
   // as size is initialize to 0 at start, it always points to empty space
@@ -123,7 +119,7 @@ static bool insert(PLList *self, int index, etype_t etype, void *value) {
   if ((self->capacity == self->size + 1) && !resize(self)) return false;
 
   // 3. Create a new element
-  element_t *element = new_element(etype, value);
+  element_t *element = pl_new_element(etype, value);
   if (!element) return false;
 
   // 4. Move the elements to right starting from index position
@@ -186,7 +182,7 @@ static bool remove_at(PLList *self, int index){
     memmove(&self->arr[index], &self->arr[index + 1], elements_to_move * sizeof(element_t *));
   }
 
-  free_element(to_remove);           // free the removed element
+  pl_free_element(to_remove);        // free the removed element
 
   self->arr[self->size - 1] = NULL;  // clear unused array slot
   self->size--;                      // decrement the size
@@ -269,39 +265,4 @@ static bool resize(PLList *self) {
   self->arr = new_arr;
   self->capacity = new_capacity;
   return true;
-}
-
-
-static element_t* new_element(etype_t etype, void *value) {
-  if (!value) return NULL;
-
-  element_t *element = calloc(1, sizeof(element_t));
-  if (!element) return NULL;
-
-  switch (etype) {
-    case INT: element->value.ival = *(int *)value; break;
-    case DOUBLE: element->value.dval = *(double *)value; break;
-    case STR: {
-      element->value.sval = strdup((char *)value);
-      if (!element->value.sval) {
-        free(element);
-        return NULL;
-      }
-      break;
-    }
-    default: return NULL;
-  }
-
-  element->etype = etype;
-  return element;
-}
-
-
-static void free_element(element_t *element) {
-  if (!element) return;
-
-  // free the memory allocated for string
-  if (element->etype == STR) free(element->value.sval);
-
-  free(element);
 }
