@@ -19,7 +19,7 @@
 /// Representation of a Single Linked List struct
 typedef struct PLLinkedList {
   /// Get the value of a given index
-  element_t* (* get)(struct PLLinkedList *self, int index);
+  element_t (* get)(struct PLLinkedList *self, int index);
 
   /// Append the value at the end of the linked list
   bool (* append)(struct PLLinkedList *self, etype_t etype, void *value);
@@ -28,6 +28,8 @@ typedef struct PLLinkedList {
   bool (* insert)(struct PLLinkedList *self, int index, etype_t etype, void *value);
 
   /// Pop the last element from the linked list
+  /// if etype is STR, caller must free the element after use.
+  /// using pl_free_element() to avoid memeory leaks
   element_t (* pop)(struct PLLinkedList *self);
 
   /// Remove the first occurrence of the value

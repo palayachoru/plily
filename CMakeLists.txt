@@ -42,6 +42,7 @@ set_property(GLOBAL PROPERTY PLILY_HEADERS "")
 # Enter each sub directories to make object targets
 add_subdirectory(src/util)
 add_subdirectory(src/list)
+add_subdirectory(src/llist)
 
 # Pull all the registered object & header files
 get_property(COLLECTED_OBJECTS GLOBAL PROPERTY PLILY_OBJECTS)
